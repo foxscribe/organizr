@@ -1,0 +1,27 @@
+services:
+  bot:
+    build: .
+    container_name: organizr-bot
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      DATABASE_URL: postgres://organizr:password@db:5432/organizr
+    command: ["/usr/local/bin/organizr"]
+
+  db:
+    image: postgres:17
+    container_name: organizr-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: organizr
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: organizr
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  db_data:
