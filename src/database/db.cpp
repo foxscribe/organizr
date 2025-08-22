@@ -49,4 +49,9 @@ std::vector<o::list> getLists(pqxx::connection& cx) {
     tx.commit();
     return result;
 }
+void addList(pqxx::connection& cx, const std::string& name) {
+    pqxx::work tx(cx);
+    tx.exec("INSERT INTO list (val) VALUES ($1)", pqxx::params{name});
+    tx.commit();
+}
 } // namespace o::db

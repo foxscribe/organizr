@@ -16,64 +16,23 @@
  */
 
 #include <cstdlib>
-#include <iostream>
-#include <ostream>
 #include <stdexcept>
 
 #include <dpp/dpp.h>
 #include <pqxx/pqxx>
 
-#include "db.h"
+#include "database/db.h"
+#include "logging/log.h"
 #include "strings.h"
 
 constexpr const char* TOKEN_VARNAME   = "DISCORD_TOKEN";
 constexpr const char* URL_VARNAME     = "DATABASE_URL";
 constexpr const char* GUILDID_VARNAME = "GUILD_ID";
 
-#include <chrono>
-#include <iomanip>
-#include <iostream>
-
-#include <dpp/dpp.h>
-
-void log_event(const dpp::log_t& event) {
-    if (event.severity == 0) {
-        return;
-    }
-    auto now          = std::chrono::system_clock::now();
-    auto time_t_now   = std::chrono::system_clock::to_time_t(now);
-    auto local_tm     = *std::localtime(&time_t_now);
-    const char* color = "";
-    const char* reset = "\033[0m";
-    switch (event.severity) {
-        case dpp::ll_critical:
-            color = "\033[1;31m";
-            break; // red
-        case dpp::ll_error:
-            color = "\033[31m";
-            break; // red
-        case dpp::ll_warning:
-            color = "\033[33m";
-            break; // yellow
-        case dpp::ll_info:
-            color = "\033[36m";
-            break; // cyan
-        case dpp::ll_debug:
-            color = "\033[32m";
-            break; // green
-        default:
-            color = "";
-            break;
-    }
-    std::cout << "[" << std::put_time(&local_tm, "%F %T") << "] " << color
-              << "[" << dpp::utility::loglevel(event.severity) << "] "
-              << event.message << reset << std::endl;
-}
-
 int main() {
     pqxx::connection cx(std::getenv(URL_VARNAME));
     dpp::cluster bot(std::getenv(TOKEN_VARNAME));
-    bot.on_log(log_event);
+    bot.on_log(o::log::cout_logger);
     bot.on_slashcommand([&bot, &cx](const dpp::slashcommand_t& event) {
         if (event.command.get_command_name() == "authors") {
             event.reply(
@@ -105,10 +64,7 @@ int main() {
             try {
                 std::string name =
                         std::get<std::string>(event.get_parameter("list"));
-                pqxx::work tx(cx);
-                tx.exec("INSERT INTO list (val) VALUES ($1)",
-                        pqxx::params{name});
-                tx.commit();
+                o::db::addList(cx, name);
                 event.reply(dpp::message("Added new list")
                                     .set_flags(dpp::m_ephemeral));
             } catch (std::runtime_error err) {

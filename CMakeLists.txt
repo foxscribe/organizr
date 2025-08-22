@@ -24,9 +24,15 @@ pkg_check_modules(PQXX REQUIRED libpqxx)
 add_executable(organizr
     src/bot.cpp
     src/strings.h
-    src/list.h
-    src/db.h
-    src/db.cpp
+    src/types/list.h
+    src/database/db.h
+    src/database/db.cpp
+    src/logging/log.h
+    src/logging/log.cpp
+    src/bot/HandlerCollection.h
+    src/bot/HandlerCollection.cpp
+    src/bot/handlers.h
+    src/bot/handlers.cpp
 )
 
 target_include_directories(organizr

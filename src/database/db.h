@@ -21,8 +21,9 @@
 
 #include <pqxx/pqxx>
 
-#include "list.h"
+#include "../types/list.h"
 
 namespace o::db {
 std::vector<o::list> getLists(pqxx::connection& cx);
-}
+void addList(pqxx::connection& cx, const std::string& name);
+} // namespace o::db

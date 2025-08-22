@@ -1,0 +1,42 @@
+#include "log.h"
+
+#include <chrono>
+#include <iomanip>
+#include <iostream>
+#include <ostream>
+
+namespace o::log {
+void cout_logger(const dpp::log_t& event) {
+    if (event.severity == 0) {
+        return;
+    }
+    auto now          = std::chrono::system_clock::now();
+    auto time_t_now   = std::chrono::system_clock::to_time_t(now);
+    auto local_tm     = *std::localtime(&time_t_now);
+    const char* color = "";
+    const char* reset = "\033[0m";
+    switch (event.severity) {
+        case dpp::ll_critical:
+            color = "\033[1;31m";
+            break; // red
+        case dpp::ll_error:
+            color = "\033[31m";
+            break; // red
+        case dpp::ll_warning:
+            color = "\033[33m";
+            break; // yellow
+        case dpp::ll_info:
+            color = "\033[36m";
+            break; // cyan
+        case dpp::ll_debug:
+            color = "\033[32m";
+            break; // green
+        default:
+            color = "";
+            break;
+    }
+    std::cout << "[" << std::put_time(&local_tm, "%F %T") << "] " << color
+              << "[" << dpp::utility::loglevel(event.severity) << "] "
+              << event.message << reset << std::endl;
+}
+} // namespace o::log
