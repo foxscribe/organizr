@@ -23,5 +23,7 @@
     "search.exclude": {
         "build": true,
         ".cache": true
-    }
+    },
+    "editor.tabSize": 4,
+    "editor.indentSize": 4
 }

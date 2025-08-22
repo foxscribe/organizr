@@ -17,13 +17,18 @@
 
 #pragma once
 
-#include <vector>
-
 #include <pqxx/pqxx>
 
 #include "../types/list.h"
 
 namespace o::db {
-std::vector<o::list> getLists(pqxx::connection& cx);
-void addList(pqxx::connection& cx, const std::string& name);
+class DatabaseWrapper {
+  private:
+    pqxx::connection cx;
+
+  public:
+    DatabaseWrapper(std::string uri);
+    std::vector<o::list> getLists();
+    void addList(const std::string& name);
+};
 } // namespace o::db

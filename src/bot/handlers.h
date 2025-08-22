@@ -17,13 +17,12 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
+#include <dpp/dpp.h>
 
-namespace o {
-struct list {
-    std::string val;
-    std::vector<std::string> tasks;
-    std::string message() const;
-};
-} // namespace o
+namespace o::bot::handlers {
+void authors(const dpp::slashcommand_t& event);
+void license(const dpp::slashcommand_t& event);
+void repository(const dpp::slashcommand_t& event);
+void lists(const dpp::slashcommand_t& event);
+void newlist(const dpp::slashcommand_t& event);
+} // namespace o::bot::handlers

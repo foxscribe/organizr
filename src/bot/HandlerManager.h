@@ -17,13 +17,27 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
+#include <functional>
 
-namespace o {
-struct list {
-    std::string val;
-    std::vector<std::string> tasks;
-    std::string message() const;
+#include <dpp/dpp.h>
+
+namespace o::bot {
+class HandlerManager {
+  private:
+    std::unordered_map<std::string,
+                       std::function<void(const dpp::slashcommand_t&)>>
+            handlers;
+
+  public:
+    constexpr void operator()(
+            std::string name,
+            const std::function<void(const dpp::slashcommand_t&)>& handler) {
+        handlers[name] = handler;
+    }
+
+    constexpr std::function<void(const dpp::slashcommand_t&)>& operator[](
+            std::string name) {
+        return handlers[name];
+    }
 };
-} // namespace o
+}; // namespace o::bot

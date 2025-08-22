@@ -16,69 +16,29 @@
  */
 
 #include <cstdlib>
-#include <stdexcept>
 
 #include <dpp/dpp.h>
 #include <pqxx/pqxx>
 
-#include "database/db.h"
-#include "logging/log.h"
-#include "strings.h"
-
-constexpr const char* TOKEN_VARNAME   = "DISCORD_TOKEN";
-constexpr const char* URL_VARNAME     = "DATABASE_URL";
-constexpr const char* GUILDID_VARNAME = "GUILD_ID";
+#include "bot/HandlerManager.h"
+#include "bot/handlers.h"
+#include "global.h"
+#include "logging/logging.h"
 
 int main() {
-    pqxx::connection cx(std::getenv(URL_VARNAME));
-    dpp::cluster bot(std::getenv(TOKEN_VARNAME));
-    bot.on_log(o::log::cout_logger);
-    bot.on_slashcommand([&bot, &cx](const dpp::slashcommand_t& event) {
-        if (event.command.get_command_name() == "authors") {
-            event.reply(
-                    dpp::message(o::s::AUTHORS).set_flags(dpp::m_ephemeral));
-        } else if (event.command.get_command_name() == "license") {
-            event.reply(
-                    dpp::message(o::s::LICENSE).set_flags(dpp::m_ephemeral));
-        } else if (event.command.get_command_name() == "repository") {
-            dpp::embed embed =
-                    dpp::embed()
-                            .set_color(dpp::colors::orange_gold)
-                            .set_title("Organizr")
-                            .set_url(o::s::REPO_URL)
-                            .set_description("A discord bot to organize lists");
-            event.reply(dpp::message(embed).set_flags(dpp::m_ephemeral));
-        } else if (event.command.get_command_name() == "lists") {
-            auto lists = o::db::getLists(cx);
-            if (lists.empty()) {
-                event.reply(dpp::message("No lists available")
-                                    .set_flags(dpp::m_ephemeral));
-                return;
-            }
-            std::string message = "";
-            for (auto l : lists) {
-                message += l.message();
-            }
-            event.reply(message);
-        } else if (event.command.get_command_name() == "newlist") {
-            try {
-                std::string name =
-                        std::get<std::string>(event.get_parameter("list"));
-                o::db::addList(cx, name);
-                event.reply(dpp::message("Added new list")
-                                    .set_flags(dpp::m_ephemeral));
-            } catch (std::runtime_error err) {
-                bot.log(dpp::loglevel::ll_critical, err.what());
-                event.reply(dpp::message("Cannot add the list you requested")
-                                    .set_flags(dpp::m_ephemeral));
-            }
-        } else if (event.command.get_command_name() == "newtask") {
-            auto lists          = o::db::getLists(cx);
-            std::string message = "";
-            for (auto l : lists) {
-                message += l.message();
-            }
-            event.reply(message);
+    constexpr auto& bot = o::global::bot;
+    o::bot::HandlerManager handlers;
+    handlers("authors", o::bot::handlers::authors);
+    handlers("license", o::bot::handlers::license);
+    handlers("repository", o::bot::handlers::repository);
+    handlers("lists", o::bot::handlers::lists);
+    handlers("newlist", o::bot::handlers::newlist);
+    bot.on_log(o::logging::cout_logger);
+    bot.on_slashcommand([&handlers](const dpp::slashcommand_t& event) {
+        const std::string command = event.command.get_command_name();
+        const auto& handler       = handlers[command];
+        if (handler) {
+            handler(event);
         }
     });
     bot.on_ready([&bot](const dpp::ready_t& event) {
@@ -94,8 +54,8 @@ int main() {
                                            "The name of list",
                                            true));
         bot.guild_bulk_command_create({lst, nls, atr, lic, rep},
-                                      dpp::snowflake(
-                                              std::getenv(GUILDID_VARNAME)));
+                                      dpp::snowflake(std::getenv(
+                                              o::global::GUILDID_VARNAME)));
         bot.global_bulk_command_delete();
     });
     bot.on_resumed([&bot](const dpp::resumed_t& event) {

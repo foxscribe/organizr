@@ -17,13 +17,8 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
+#include <dpp/dpp.h>
 
-namespace o {
-struct list {
-    std::string val;
-    std::vector<std::string> tasks;
-    std::string message() const;
-};
-} // namespace o
+namespace o::logging {
+void cout_logger(const dpp::log_t& event);
+}

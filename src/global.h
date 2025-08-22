@@ -17,13 +17,15 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
+#include <dpp/dpp.h>
 
-namespace o {
-struct list {
-    std::string val;
-    std::vector<std::string> tasks;
-    std::string message() const;
-};
-} // namespace o
+#include "database/DatabaseWrapper.h"
+
+namespace o::global {
+constexpr const char* TOKEN_VARNAME   = "DISCORD_TOKEN";
+constexpr const char* URL_VARNAME     = "DATABASE_URL";
+constexpr const char* GUILDID_VARNAME = "GUILD_ID";
+
+inline o::db::DatabaseWrapper wrapper(std::getenv(URL_VARNAME));
+inline dpp::cluster bot(std::getenv(TOKEN_VARNAME));
+} // namespace o::global

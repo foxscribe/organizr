@@ -25,14 +25,16 @@ add_executable(organizr
     src/bot.cpp
     src/strings.h
     src/types/list.h
-    src/database/db.h
-    src/database/db.cpp
-    src/logging/log.h
-    src/logging/log.cpp
-    src/bot/HandlerCollection.h
-    src/bot/HandlerCollection.cpp
+    src/logging/logging.h
+    src/logging/logging.cpp
+    src/bot/HandlerManager.h
+    src/bot/HandlerManager.cpp
     src/bot/handlers.h
     src/bot/handlers.cpp
+    src/database/DatabaseWrapper.h
+    src/database/DatabaseWrapper.cpp
+    src/global.h
+    src/types/list.cpp
 )
 
 target_include_directories(organizr

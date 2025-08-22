@@ -15,9 +15,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "db.h"
+#include "DatabaseWrapper.h"
+
+#include <string>
+
 namespace o::db {
-std::vector<o::list> getLists(pqxx::connection& cx) {
+DatabaseWrapper::DatabaseWrapper(std::string uri) : cx(pqxx::connection(uri)) {}
+std::vector<o::list> DatabaseWrapper::getLists() {
     std::vector<o::list> result;
     pqxx::work tx(cx);
     pqxx::result rs = tx.exec("SELECT l.id, l.val, t.val "
@@ -49,7 +53,7 @@ std::vector<o::list> getLists(pqxx::connection& cx) {
     tx.commit();
     return result;
 }
-void addList(pqxx::connection& cx, const std::string& name) {
+void DatabaseWrapper::addList(const std::string& name) {
     pqxx::work tx(cx);
     tx.exec("INSERT INTO list (val) VALUES ($1)", pqxx::params{name});
     tx.commit();

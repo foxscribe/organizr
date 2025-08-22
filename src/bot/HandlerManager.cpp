@@ -15,15 +15,4 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
-
-#include <string>
-#include <vector>
-
-namespace o {
-struct list {
-    std::string val;
-    std::vector<std::string> tasks;
-    std::string message() const;
-};
-} // namespace o
+#include "HandlerManager.h"

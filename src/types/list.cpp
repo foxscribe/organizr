@@ -15,15 +15,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include "list.h"
 
-#include <string>
-#include <vector>
+#include <format>
 
 namespace o {
-struct list {
-    std::string val;
-    std::vector<std::string> tasks;
-    std::string message() const;
-};
+std::string list::message() const {
+    std::string msg = "```\n";
+    msg += val + "\n";
+    for (long i = 0; i < tasks.size(); i++) {
+        msg += std::format("-. {}\n", tasks[i]);
+    }
+    msg += "```";
+    return msg;
+}
 } // namespace o
