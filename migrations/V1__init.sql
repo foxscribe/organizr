@@ -1,0 +1,10 @@
+CREATE TABLE list (
+    id BIGSERIAL PRIMARY KEY,
+    val TEXT NOT NULL
+);
+
+CREATE TABLE task (
+    id BIGSERIAL PRIMARY KEY,
+    list_id BIGSERIAL REFERENCES list(id),
+    val TEXT NOT NULL
+);

@@ -1,0 +1,90 @@
+# .clang-format — "Readable-100"
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: c++20
+
+# Line width & indentation
+ColumnLimit: 80
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ContinuationIndentWidth: 8
+AlignAfterOpenBracket: Align
+BreakBeforeBinaryOperators: None
+BreakBeforeTernaryOperators: true
+PenaltyBreakBeforeFirstCallParameter: 100
+PenaltyReturnTypeOnItsOwnLine: 200
+
+# Braces & layout
+BreakBeforeBraces: Attach      # int foo() { ... }
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: Yes
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 4
+Cpp11BracedListStyle: true
+NamespaceIndentation: None
+IndentCaseLabels: true
+KeepEmptyLinesAtTheStartOfBlocks: false
+
+# Spacing
+SpaceBeforeParens: ControlStatements # if (...) but Foo(...) for calls
+SpacesInParentheses: false
+SpacesInAngles: false
+SpacesInSquareBrackets: false
+SpaceBeforeAssignmentOperators: true
+SpaceAfterCStyleCast: true
+
+# Pointers/refs & qualifiers
+PointerAlignment: Left              # int* p;
+ReferenceAlignment: Left            # int& r;
+DerivePointerAlignment: false
+QualifierAlignment: Left            # const int* p; (east-const discouraged)
+
+# Templates & lambdas
+AlwaysBreakAfterReturnType: None
+LambdaBodyIndentation: Signature
+
+# Comments
+CommentPragmas: '^ NOLINT|^ NOLINTNEXTLINE'
+
+# Includes (stable, deterministic ordering)
+SortIncludes: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^<[^/]+>$'              # C / C++ std headers (<vector>)
+    Priority: 1
+  - Regex: '^<SFML/.*>'             # SFML
+    Priority: 2
+  - Regex: '^<entt/.*>'             # EnTT
+    Priority: 3
+  - Regex: '^<box2d/.*>'            # Box2D
+    Priority: 4
+  - Regex: '^<lua/.*>|^<sol/.*>'    # Lua / sol2
+    Priority: 5
+  - Regex: '^<.*>'                  # other system headers
+    Priority: 6
+  - Regex: '^"[^"]*\.hpp"'          # project headers (.hpp first)
+    Priority: 7
+  - Regex: '^"[^"]*\.h"'            # project C headers
+    Priority: 8
+IncludeIsMainRegex: '([-_](test|unittest))?$'
+
+# Preprocessor
+MacroBlockBegin: '^#if'
+MacroBlockEnd: '^#endif'
+IndentPPDirectives: AfterHash
+SpaceAfterLogicalNot: false
+
+# Formatting of enums, braced inits, etc.
+AllowAllArgumentsOnNextLine: false
+BinPackArguments: false
+BinPackParameters: false
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveDeclarations: None
+AlignConsecutiveMacros: None
+AlignEscapedNewlines: Left
+BreakConstructorInitializers: AfterColon
+BreakInheritanceList: BeforeColon

@@ -17,14 +17,22 @@
 
 #pragma once
 
-namespace o::s {
-inline constexpr const char* AUTHORS =
-        "Iaroslav \"foxscribe\" Lisov – <@929604892040003594>";
+#include <string>
+#include <vector>
 
-inline constexpr const char* LICENSE =
-        "This program is distibuted under the terms of GNU Affero General "
-        "Public "
-        "License. To know more, see https://www.gnu.org/licenses/";
+namespace o {
+struct list {
+    std::string val;
+    std::vector<std::string> tasks;
 
-inline constexpr const char* REPO_URL = "https://github.com/foxscribe/organizr";
-} // namespace o::s
+    std::string message() const {
+        std::string msg = "```\n";
+        msg += val + "\n";
+        for (long i = 0; i < tasks.size(); i++) {
+            msg += std::format("{}. {}\n", i + 1, tasks[i]);
+        }
+        msg += "```";
+        return msg;
+    }
+};
+} // namespace o

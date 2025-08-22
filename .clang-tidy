@@ -1,0 +1,92 @@
+# .clang-tidy — "GameDev-Strict (C++17)"
+
+Checks: >
+  # Core bug finding
+  clang-analyzer-*,
+  bugprone-*,-bugprone-exception-escape,
+  misc-*,-misc-unused-parameters,
+  portability-simd-intrinsics,
+
+  # Modernization & readability (C++17-safe)
+  modernize-*,
+  -modernize-use-trailing-return-type,
+  -modernize-avoid-c-arrays,           # allow for interop/perf-critical code
+  -modernize-use-std-format,           # C++20
+  -modernize-use-std-span,             # C++20
+  -modernize-use-std-print,            # C++23
+  readability-*,
+  -readability-identifier-naming,
+  -readability-magic-numbers,
+
+  # Performance
+  performance-*,
+  -performance-type-promotion-in-math-fn,
+  -performance-no-int-to-ptr,
+
+  # C++ Core Guidelines (sane subset)
+  cppcoreguidelines-interfaces-global-init,
+  cppcoreguidelines-narrowing-conversions,
+  cppcoreguidelines-pro-bounds-constant-array-index,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-owning-memory,
+  -cppcoreguidelines-no-malloc,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+
+  # CERT / Security (useful subset)
+  cert-dcl21-cpp,
+  cert-dcl58-cpp,
+  cert-err58-cpp,
+  security-*,
+  -security.insecureAPI.rand
+
+WarningsAsErrors: '*'
+HeaderFilterRegex: '^(src|include)/'
+AnalyzeTemporaryDtors: true
+FormatStyle: file
+
+CheckOptions:
+  # Use [[nodiscard]] in C++17-capable way
+  - key: modernize-use-nodiscard.ReplacementString
+    value: '[[nodiscard]]'
+
+  # modernize-use-override
+  - key: modernize-use-override.IgnoreDestructors
+    value: 'false'
+
+  # modernize-use-nullptr (be strict)
+  - key: modernize-use-nullptr.NullMacros
+    value: 'NULL'
+
+  # performance-unnecessary-copy-initialization
+  - key: performance-unnecessary-copy-initialization.AllowedTypes
+    value: 'std::string;sf::String'
+
+  # readability-implicit-bool-conversion
+  - key: readability-implicit-bool-conversion.AllowIntegerConditions
+    value: 'false'
+
+  # readability-magic-numbers (guardrails instead of blanket ban)
+  - key: readability-magic-numbers.IgnoredValues
+    value: '-1,0,1,2,4,8,16,32,64,128,256,512,1024'
+  - key: readability-magic-numbers.IgnorePowersOf2IntegerValues
+    value: 'true'
+  - key: readability-magic-numbers.IgnoreEnums
+    value: 'true'
+  - key: readability-magic-numbers.IgnoreArrays
+    value: 'true'
+  - key: readability-magic-numbers.IgnoreDefaultParameterValues
+    value: 'true'
+
+  # cppcoreguidelines-narrowing-conversions (reduce template noise)
+  - key: cppcoreguidelines-narrowing-conversions.WarnWithinTemplateInstantiation
+    value: 'false'
+
+  # bugprone-sizeof-expression (catch sizeof(ptr) mistakes)
+  - key: bugprone-sizeof-expression.WarnOnSizeOfConstant
+    value: 'true'
+
+  # Analyzer opt-ins
+  - key: clang-analyzer-cplusplus.NewDeleteLeaks
+    value: 'true'
+  - key: clang-analyzer-core.StackAddressEscape
+    value: 'true'

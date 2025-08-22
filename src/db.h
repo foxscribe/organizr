@@ -17,14 +17,12 @@
 
 #pragma once
 
-namespace o::s {
-inline constexpr const char* AUTHORS =
-        "Iaroslav \"foxscribe\" Lisov – <@929604892040003594>";
+#include <vector>
 
-inline constexpr const char* LICENSE =
-        "This program is distibuted under the terms of GNU Affero General "
-        "Public "
-        "License. To know more, see https://www.gnu.org/licenses/";
+#include <pqxx/pqxx>
 
-inline constexpr const char* REPO_URL = "https://github.com/foxscribe/organizr";
-} // namespace o::s
+#include "list.h"
+
+namespace o::db {
+std::vector<o::list> getLists(pqxx::connection& cx);
+}

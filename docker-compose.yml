@@ -4,10 +4,11 @@ services:
     container_name: organizr-bot
     restart: unless-stopped
     depends_on:
-      - db
+      - flyway
     environment:
       DISCORD_TOKEN: ${DISCORD_TOKEN}
       DATABASE_URL: postgres://organizr:password@db:5432/organizr
+      GUILD_ID: ${GUILD_ID}
     command: ["/usr/local/bin/organizr"]
 
   db:
@@ -22,6 +23,14 @@ services:
       - db_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+
+  flyway:
+    image: flyway/flyway:11
+    command: -url=jdbc:postgresql://db:5432/organizr -user=organizr -password=password migrate
+    volumes:
+      - ./migrations:/flyway/sql
+    depends_on:
+      - db
 
 volumes:
   db_data:
